@@ -78,12 +78,14 @@ class NearbyTransport(APIView):
 
 class PredictTransport(APIView):
     def post(self, request):
-        all_data = pd.read_csv('all_data.csv').drop(
-            columns=['id', 'activityType', 'transitionType', 'lat', 'long', 'time', 'lat2', 'long2'])
+        all_data = pd.read_csv('all_data_1.csv').drop(
+            columns=['id', 'activityType', 'transitionType', 'lat', 'long', 'time', 'lat2', 'long2', 'prediction'])
         all_data = all_data[~all_data['transport'].isin(['walking', 'still', 'walking ', 'testing', 'test'])]
 
-        X = all_data.drop(columns=['transport'])
-        y = all_data['transport']
+        randomized_data = all_data.sample(frac=1, random_state=42)
+
+        X = randomized_data.drop(columns=['transport'])
+        y = randomized_data['transport']
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 

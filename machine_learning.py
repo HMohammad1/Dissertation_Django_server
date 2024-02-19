@@ -6,19 +6,28 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
-data = pd.read_csv('13_02_23.txt', header=None)
-
-filtered_data = data[(data.iloc[:, 8] != 'walking') & (data.iloc[:, 8] != 'walking ') & (data.iloc[:, 8] != 'still') & (data.iloc[:, 8] != 'testing')]
-
-X = filtered_data.iloc[:, 1:-6]
-
-y = filtered_data.iloc[:, 8:-5]
-
-model = DecisionTreeClassifier()
-model.fit(X, y)
-# predictions = model.predict([[0.037871,0.002964,0.007380,4.242659,8.313830,1.005327,996.467102]])
-
-
+# all_data = pd.read_csv('all_data_1.csv').drop(columns=['id', 'activityType', 'transitionType', 'lat', 'long', 'time', 'lat2', 'long2', 'prediction'])
+#
+# all_data = all_data[~all_data['transport'].isin(['walking', 'still', 'walking ', 'testing', 'test'])]
+#
+# randomized_data = all_data.sample(frac=1, random_state=42)
+#
+# X = randomized_data.drop(columns=['transport'])
+#
+# y = randomized_data['transport']
+#
+# model = DecisionTreeClassifier()
+# model.fit(X, y)
+# predict_data = [
+#     # [19.78060531616211, 1.1967654954382334, 5.257773399353027, 2.2861340045928955, 5.379897594451904, 1.0082207918167114, 1014.9027709960938], # bus
+#     # [1.2106719017028809, 1.3663483032132298, 3.978463888168335, 3.066884994506836, 6.49955940246582, 1.0053261518478394, 1012.7695922851562], # bus
+#     [0.6273741126060486, 0.6007902810731807, 2.9550669193267822, 2.9293830394744873, 8.038862228393555, 1.0052070617675781, 1017.5653686523438], # bus
+#     [0.49905794858932495, 0.32080606901700726, 2.8237195014953613, 2.9558942317962646, 8.091769218444824, 1.0071349143981934, 1017.552001953125] # bus
+# ]
+#
+# predictions = model.predict(predict_data)
+#
+# print(predictions)
 
 # make pands show all the rows
 pd.set_option('display.max_rows', None)
@@ -45,13 +54,15 @@ pd.set_option('display.width', None)
 
 ######################################################################### using CSV
 
-all_data = pd.read_csv('all_data.csv').drop(columns=['id', 'activityType', 'transitionType', 'lat', 'long', 'time', 'lat2', 'long2'])
+all_data = pd.read_csv('all_data_1.csv').drop(columns=['id', 'activityType', 'transitionType', 'lat', 'long', 'time', 'lat2', 'long2', 'prediction'])
 
 all_data = all_data[~all_data['transport'].isin(['walking', 'still', 'walking ', 'testing', 'test'])]
 
-X = all_data.drop(columns=['transport'])
+randomized_data = all_data.sample(frac=1, random_state=42)
 
-y = all_data['transport']
+X = randomized_data.drop(columns=['transport'])
+
+y = randomized_data['transport']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -66,12 +77,14 @@ print(f"Accuracy: {accuracy}")
 feature_names = X.columns.tolist()
 
 predict_data = [
-    [3.0962629318237305, 0.4297594445606424, -0.10849695652723312, 4.308098316192627, 8.819670677185059, 1.0252342224121094, 995.9992065429688], # car
-    [3.0962629318237305, 0.4297594445606424, -0.10849695652723312, 4.308098316192627, 8.819670677185059, 1.0252342224121094, 995.9992065429688], # car
-    [12.567118644714355, 0.08026108655626572, 1.3032509088516235, 1.8289859294891357, 6.180316925048828, 1.012398600578308, 996.7298583984375], # bus
-    [7.208097457885742, 3.6235756378989024, 1.2640049457550049, 1.8894696235656738, 6.253283500671387, 1.0083556175231934, 996.8511962890625], # bus
-    [20.73564338684082, 1.519104592849551, -0.13035139441490173, 3.7056143283843994, 8.833455085754395, 1.012909173965454, 997.2237548828125] # car
+    # [19.78060531616211, 1.1967654954382334, 5.257773399353027, 2.2861340045928955, 5.379897594451904, 1.0082207918167114, 1014.9027709960938], # bus
+    # [1.2106719017028809, 1.3663483032132298, 3.978463888168335, 3.066884994506836, 6.49955940246582, 1.0053261518478394, 1012.7695922851562], # bus
+    [0.6273741126060486, 0.6007902810731807, 2.9550669193267822, 2.9293830394744873, 8.038862228393555, 1.0052070617675781, 1017.5653686523438], # bus
+    [0.49905794858932495, 0.32080606901700726, 2.8237195014953613, 2.9558942317962646, 8.091769218444824, 1.0071349143981934, 1017.552001953125], # bus
+    [13.722701072692871, 6.0520406342195034, 0.3391350507736206, 4.312935829162598, 7.745648384094238, 1.0188889503479004, 1013.7005615234375] # car
+
 ]
+
 
 predict_data_df = pd.DataFrame(predict_data, columns=feature_names)
 
