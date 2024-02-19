@@ -1,0 +1,110 @@
+import json
+
+from django.db import connection
+from django.http import JsonResponse
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from myapp.serealizer import DissertationSerializer
+import pandas as pd
+
+
+class Create(APIView):
+    def post(self, request):
+        serializer = DissertationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Distance(APIView):
+    def post(self, request):
+        import json
+
+        data = json.loads(request.body)
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+
+        query = """
+            SELECT ST_Distance(
+                ST_MakePoint(%s, %s)::geography,
+                '0101000020E61000000C3444BA447A09C0E1C9B8F30EF94B40'::geography
+            ) AS distance_meters;
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query, [longitude, latitude])
+            row = cursor.fetchone()
+
+        if row:
+            return JsonResponse({"distance_meters": row[0]})
+        else:
+            return JsonResponse({"error": "Could not calculate distance"}, status=400)
+
+
+class NearbyTransport(APIView):
+    def post(self, request):
+        data = json.loads(request.body)
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+        radius = data.get('radius', 15)
+
+        query = ("\n"
+                 "            SELECT *\n"
+                 "            FROM transport_free_1\n"
+                 "            WHERE ST_DWithin(\n"
+                 "                geom::geography,\n"
+                 "                ST_MakePoint(%s, %s)::geography,\n"
+                 "                %s\n"
+                 "            );\n"
+                 "        ")
+
+        results = []
+        with connection.cursor() as cursor:
+            cursor.execute(query, [longitude, latitude, radius])
+            columns = [col[0] for col in cursor.description]
+            for row in cursor.fetchall():
+                results.append(dict(zip(columns, row)))
+
+        if results:
+            return JsonResponse({"results": results})
+        else:
+            return JsonResponse({"error": "No nearby transports found"}, status=404)
+
+
+class PredictTransport(APIView):
+    def post(self, request):
+        all_data = pd.read_csv('all_data.csv').drop(
+            columns=['id', 'activityType', 'transitionType', 'lat', 'long', 'time', 'lat2', 'long2'])
+        all_data = all_data[~all_data['transport'].isin(['walking', 'still', 'walking ', 'testing', 'test'])]
+
+        X = all_data.drop(columns=['transport'])
+        y = all_data['transport']
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        clf = RandomForestClassifier(n_estimators=100, random_state=42)
+        clf.fit(X_train, y_train)
+
+        try:
+            data = json.loads(request.body)
+            speed = data.get('speed')
+            standardD = data.get('standardD')
+            avgX = data.get('avgX')
+            avgY = data.get('avgY')
+            avgZ = data.get('avgZ')
+            gForce = data.get('gForce')
+            bar = data.get('bar')
+            prediction = clf.predict([[speed,standardD, avgX, avgY, avgZ, gForce, bar]])
+            response_data = {
+                'prediction': prediction[0]
+            }
+            return JsonResponse(response_data)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+
