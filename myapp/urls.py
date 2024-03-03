@@ -1,5 +1,5 @@
 from django.urls import path
-from myapp.views import Create, Distance, NearbyTransport, PredictTransport
+from myapp.views import Create, Distance, NearbyTransport, PredictTransport, OnBusRoute, FetchBusData
 from . import views
 
 urlpatterns = [
@@ -7,5 +7,7 @@ urlpatterns = [
     path('', Create.as_view()),
     path('distance/', Distance.as_view()),
     path('transport/', NearbyTransport.as_view()),
-    path('predict/', PredictTransport.as_view())
+    path('predict/', PredictTransport.as_view()),
+    path('busRoute/', OnBusRoute.as_view()),
+    path('busData/', FetchBusData.as_view())
 ]

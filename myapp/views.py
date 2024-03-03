@@ -101,7 +101,7 @@ class PredictTransport(APIView):
             avgZ = data.get('avgZ')
             gForce = data.get('gForce')
             bar = data.get('bar')
-            prediction = clf.predict([[speed,standardD, avgX, avgY, avgZ, gForce, bar]])
+            prediction = clf.predict([[speed, standardD, avgX, avgY, avgZ, gForce, bar]])
             response_data = {
                 'prediction': prediction[0]
             }
@@ -110,3 +110,54 @@ class PredictTransport(APIView):
             return JsonResponse({'error': str(e)}, status=400)
 
 
+class OnBusRoute(APIView):
+    def post(self, request):
+        data = json.loads(request.body)
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+        radius = data.get('radius', 10)
+
+        # SQL query to find nearby bus routes
+        query = """
+            SELECT name
+            FROM public."BusRoutes"
+            WHERE ST_DWithin(
+                geom::geography,
+                ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography,
+                %s
+            );
+        """
+
+        results = []
+        with connection.cursor() as cursor:
+            cursor.execute(query, [longitude, latitude, radius])
+            columns = [col[0] for col in cursor.description]
+            for row in cursor.fetchall():
+                results.append(dict(zip(columns, row)))
+
+        if results:
+            return JsonResponse({"results": results})
+        else:
+            return JsonResponse({"error": "No nearby bus routes found"}, status=404)
+
+
+class FetchBusData(APIView):
+    def post(self, request):
+        data = json.loads(request.body)
+        column_name = data.get('column_name')
+
+        query = f"""
+            SELECT string_to_array("{column_name}", ', ') 
+            FROM public.myapp_busesforeachstop;
+        """
+
+        results = []
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            for row in cursor.fetchall():
+                results.append(row[0])
+
+        if results:
+            return JsonResponse({"results": results})
+        else:
+            return JsonResponse({"error": "No data found"}, status=404)

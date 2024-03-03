@@ -96,4 +96,5 @@ most_common_prediction = unique[most_common_transport_amount]
 count_of_most_common = counts[most_common_transport_amount]
 
 print(f"Most common prediction: {most_common_prediction}, Count: {count_of_most_common}")
+# print(f"Bus: {counts[0]} Car: {counts[1]}")
 print(predictions)
