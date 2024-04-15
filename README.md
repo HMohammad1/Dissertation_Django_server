@@ -13,7 +13,7 @@ The server uses NGROK to make the localhost available publicly. Make sure you ha
 ## Files
 
 - settings.py
-All the server settings are here
+> All the server settings are here
 - serealizer.py
 Makes sure the data posted conforms to the schema
 - views.py
