@@ -3,7 +3,7 @@ from myapp.models import Dissertation
 
 
 class DissertationSerializer(serializers.ModelSerializer):
-    # description = serializers.SerializerMethodField()
+    # Serializer for the dissertation model
     class Meta:
         model = Dissertation
         fields = "__all__"

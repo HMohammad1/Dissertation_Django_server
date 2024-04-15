@@ -11,6 +11,7 @@ from myapp.serealizer import DissertationSerializer
 import pandas as pd
 
 
+# Posts a new record into the database
 class Create(APIView):
     def post(self, request):
         serializer = DissertationSerializer(data=request.data)
@@ -21,6 +22,7 @@ class Create(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# calculates the distance between two geometries
 class Distance(APIView):
     def post(self, request):
         import json
@@ -46,6 +48,7 @@ class Distance(APIView):
             return JsonResponse({"error": "Could not calculate distance"}, status=400)
 
 
+# checks what bus stops are near the user
 class NearbyTransport(APIView):
     def post(self, request):
         data = json.loads(request.body)
@@ -76,6 +79,7 @@ class NearbyTransport(APIView):
             return JsonResponse({"error": "No nearby transports found"}, status=404)
 
 
+# predicts the users transport (deprecated)
 class PredictTransport(APIView):
     def post(self, request):
         all_data = pd.read_csv('all_data_1.csv').drop(
@@ -110,6 +114,7 @@ class PredictTransport(APIView):
             return JsonResponse({'error': str(e)}, status=400)
 
 
+# checks if the user is on a bus route
 class OnBusRoute(APIView):
     def post(self, request):
         data = json.loads(request.body)
@@ -141,6 +146,7 @@ class OnBusRoute(APIView):
             return JsonResponse({"error": "No nearby bus routes found"}, status=404)
 
 
+# get the buses that go to a particular bus stop
 class FetchBusData(APIView):
     def post(self, request):
         data = json.loads(request.body)

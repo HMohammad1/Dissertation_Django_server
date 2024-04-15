@@ -1,6 +1,7 @@
 from django.db import models
 
 
+# database schema for posting data
 class Dissertation(models.Model):
     avgSpeed = models.FloatField()
     standardD = models.FloatField()
@@ -23,6 +24,7 @@ class Dissertation(models.Model):
         return self.avgSpeed
 
 
+# new table to add the bus stops and what buses go to each bus stop
 class BusesForEachStop(models.Model):
     my_field = models.CharField(db_column='502533031')
     my_field2 = models.CharField(db_column='502532562', default='2, 12, 14, 30, N30')
@@ -124,7 +126,7 @@ class BusesForEachStop(models.Model):
     my_field98 = models.CharField(db_column='502533546', default='5')
     my_field99 = models.CharField(db_column='502531297', default='5')
     my_field100 = models.CharField(db_column='502533545', default='5')
-    my_field101= models.CharField(db_column='502532453', default='5')
+    my_field101 = models.CharField(db_column='502532453', default='5')
     my_field102 = models.CharField(db_column='502533121', default='5, 24')
     my_field103 = models.CharField(db_column='502533119', default='5, 24')
     my_field104 = models.CharField(db_column='502532461', default='5, 24')
@@ -135,4 +137,3 @@ class BusesForEachStop(models.Model):
     my_field109 = models.CharField(db_column='502533092', default='5')
     my_field110 = models.CharField(db_column='502532469', default='5')
     my_field111 = models.CharField(db_column='502533090', default='5')
-
