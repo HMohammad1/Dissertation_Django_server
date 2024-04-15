@@ -8,6 +8,8 @@ from sklearn.model_selection import LeaveOneGroupOut
 import pandas as pd
 import numpy as np
 
+# Code has been used from https://towardsdatascience.com/time-series-classification-for-fatigue-detection-in-runners-a-tutorial-d649e8eb322f
+
 # display all the data from pandas
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
