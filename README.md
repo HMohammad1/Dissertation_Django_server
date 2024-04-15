@@ -15,14 +15,14 @@ The server uses NGROK to make the localhost available publicly. Make sure you ha
 - settings.py
 > All the server settings are here
 - serealizer.py
-Makes sure the data posted conforms to the schema
+> Makes sure the data posted conforms to the schema
 - views.py
-All the logic for the queries are stored here
+> All the logic for the queries are stored here
 - models.py
-The database schema for tables is stored here
+> The database schema for tables is stored here
 - urls.py
-Paths for the server which are appended to the NGROK base URL, and what method should run
+> Paths for the server which are appended to the NGROK base URL, and what method should run
 - MLNew.py
-Machine learning algorithms which use a global and personalised classifier. All code received from https://towardsdatascience.com/time-series-classification-for-fatigue-detection-in-runners-a-tutorial-d649e8eb322f
+> Machine learning algorithms which use a global and personalised classifier. All code received from https://towardsdatascience.com/time-series-classification-for-fatigue-detection-in-runners-a-tutorial-d649e8eb322f
 - Other Files
-The CSV for testing the ML is included. "AllData.csv" is used for the training, whereas the other CSV files are used for testing with new data. There are 8 of each bus and car. 
+> The CSV for testing the ML is included. "AllData.csv" is used for the training, whereas the other CSV files are used for testing with new data. There are 8 of each bus and car. 
